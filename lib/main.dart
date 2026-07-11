@@ -57,6 +57,7 @@ class SchoolErpApp extends StatelessWidget {
     final authProvider = context.watch<AuthProvider>();
 
     final router = GoRouter(
+      refreshListenable: authProvider,
       initialLocation: '/login',
       redirect: (context, state) {
         final loggedIn = authProvider.isAuthenticated;

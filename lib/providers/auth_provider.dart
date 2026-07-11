@@ -42,6 +42,7 @@ class AuthProvider with ChangeNotifier {
         await _storage.write(key: 'auth_token', value: token);
         _isAuthenticated = true;
         _user = response.data['user'];
+        _user!['role'] = response.data['role'];
         _isLoading = false;
         notifyListeners();
         return true;
