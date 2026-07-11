@@ -33,7 +33,7 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final response = await _apiService.post('/auth/login', data: {
-        'email': email,
+        'phone': email,
         'password': password,
       });
 
@@ -60,7 +60,7 @@ class AuthProvider with ChangeNotifier {
     try {
       final response = await _apiService.get('/auth/me');
       if (response.statusCode == 200) {
-        _user = response.data['data'];
+        _user = response.data['user'];
         notifyListeners();
       }
     } catch (e) {
