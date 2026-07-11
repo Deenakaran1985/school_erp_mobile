@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/staff_provider.dart';
@@ -36,6 +37,14 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
         foregroundColor: const Color(0xFF1E293B),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () => context.push('/notifications'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => context.push('/profile'),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => context.read<AuthProvider>().logout(),
@@ -87,10 +96,10 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
                           crossAxisSpacing: 16,
                           childAspectRatio: 1.3,
                           children: [
-                            _buildCard('Mark Attendance', Icons.checklist, Colors.teal),
-                            _buildCard('Add Homework', Icons.add_task, Colors.indigo),
-                            _buildCard('View Students', Icons.groups, Colors.blue),
-                            _buildCard('My Payslips', Icons.receipt, Colors.purple),
+                            _buildCard('Mark Attendance', Icons.checklist, Colors.teal, () => context.push('/mark_attendance')),
+                            _buildCard('Add Homework', Icons.add_task, Colors.indigo, () => context.push('/create_homework')),
+                            _buildCard('View Students', Icons.groups, Colors.blue, () => context.push('/staff_students')),
+                            _buildCard('My Payslips', Icons.receipt, Colors.purple, () => context.push('/staff_payslips')),
                           ],
                         ),
 
@@ -129,22 +138,26 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
     );
   }
 
-  Widget _buildCard(String title, IconData icon, MaterialColor color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.shade100, width: 2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color.shade500, size: 28),
-          const Spacer(),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        ],
+  Widget _buildCard(String title, IconData icon, MaterialColor color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.shade100, width: 2),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color.shade500, size: 28),
+            const Spacer(),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          ],
+        ),
       ),
     );
   }

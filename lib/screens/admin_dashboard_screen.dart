@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/admin_provider.dart';
 import '../providers/auth_provider.dart';
@@ -26,8 +27,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       appBar: AppBar(
         title: Text('Admin Dashboard ($role)'),
         actions: [
-          IconButton(icon: Icon(Icons.notifications), onPressed: () => Navigator.pushNamed(context, '/notifications')),
-          IconButton(icon: Icon(Icons.person), onPressed: () => Navigator.pushNamed(context, '/profile')),
+          IconButton(icon: Icon(Icons.notifications), onPressed: () => context.push('/notifications')),
+          IconButton(icon: Icon(Icons.person), onPressed: () => context.push('/profile')),
         ],
       ),
       body: Consumer<AdminProvider>(
@@ -77,24 +78,24 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   List<Widget> _getRoleBasedActions(String role, BuildContext context) {
     List<Widget> actions = [];
-    
-    if (role == 'principal' || role == 'correspondent') {
+
+    if (role == 'super_admin' || role == 'principal' || role == 'correspondent') {
       actions.add(_buildActionCard(context, 'Staff List', Icons.people, '/admin_staff_list'));
       actions.add(_buildActionCard(context, 'Send Notice', Icons.send, '/admin_send_notification'));
     }
-    
-    if (role == 'accountant' || role == 'correspondent') {
+
+    if (role == 'super_admin' || role == 'accountant' || role == 'correspondent') {
       actions.add(_buildActionCard(context, 'Fee Summary', Icons.monetization_on, '/admin_fee_summary'));
       actions.add(_buildActionCard(context, 'Payroll', Icons.account_balance_wallet, '/admin_payroll_summary'));
       actions.add(_buildActionCard(context, 'Expenses', Icons.receipt, '/admin_expenses'));
     }
-    
+
     return actions;
   }
 
   Widget _buildActionCard(BuildContext context, String title, IconData icon, String route) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, route),
+      onTap: () => context.push(route),
       child: Card(
         child: Container(
           width: 100,

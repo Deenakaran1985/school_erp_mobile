@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/student_provider.dart';
@@ -45,6 +46,14 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         foregroundColor: const Color(0xFF1E293B),
         elevation: 0,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications),
+            onPressed: () => context.push('/notifications'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () => context.push('/profile'),
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => context.read<AuthProvider>().logout(),
@@ -100,10 +109,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                           crossAxisSpacing: 16,
                           childAspectRatio: 1.3,
                           children: [
-                            _buildCard('Attendance', '$attPercent%', Icons.check_circle_outline, Colors.green),
-                            _buildCard('Homework', '$pendingHw Pending', Icons.book_outlined, Colors.orange),
-                            _buildCard('Exams', 'View Results', Icons.assessment_outlined, Colors.blue),
-                            _buildCard('Fees', 'No Dues', Icons.receipt_long_outlined, Colors.purple),
+                            _buildCard('Attendance', '$attPercent%', Icons.check_circle_outline, Colors.green, null),
+                            _buildCard('Homework', '$pendingHw Pending', Icons.book_outlined, Colors.orange, null),
+                            _buildCard('Exams', 'View Results', Icons.assessment_outlined, Colors.blue, () => context.push('/student_exams')),
+                            _buildCard('Fees', 'No Dues', Icons.receipt_long_outlined, Colors.purple, () => context.push('/student_fees')),
                           ],
                         ),
 
@@ -146,23 +155,27 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
     );
   }
 
-  Widget _buildCard(String title, String subtitle, IconData icon, MaterialColor color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.shade100, width: 2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, color: color.shade500, size: 28),
-          const Spacer(),
-          Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-          Text(subtitle, style: TextStyle(color: color.shade700, fontSize: 13, fontWeight: FontWeight.bold)),
-        ],
+  Widget _buildCard(String title, String subtitle, IconData icon, MaterialColor color, VoidCallback? onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.shade100, width: 2),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color.shade500, size: 28),
+            const Spacer(),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            Text(subtitle, style: TextStyle(color: color.shade700, fontSize: 13, fontWeight: FontWeight.bold)),
+          ],
+        ),
       ),
     );
   }

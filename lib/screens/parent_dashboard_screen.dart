@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/student_provider.dart';
 
@@ -24,11 +25,11 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
         actions: [
           IconButton(
             icon: Icon(Icons.notifications),
-            onPressed: () => Navigator.pushNamed(context, '/notifications'),
+            onPressed: () => context.push('/notifications'),
           ),
           IconButton(
             icon: Icon(Icons.person),
-            onPressed: () => Navigator.pushNamed(context, '/profile'),
+            onPressed: () => context.push('/profile'),
           ),
         ],
       ),
@@ -166,7 +167,7 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
 
   Widget _buildActionCard(BuildContext context, String title, IconData icon, String route) {
     return InkWell(
-      onTap: () => Navigator.pushNamed(context, route),
+      onTap: () => context.push(route),
       child: Card(
         child: Container(
           width: 100,
