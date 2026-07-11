@@ -78,4 +78,27 @@ class AuthProvider with ChangeNotifier {
     _user = null;
     notifyListeners();
   }
+
+  Future<bool> changePassword(String currentPassword, String newPassword) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await _apiService.post('/auth/change-password', data: {
+        'current_password': currentPassword,
+        'new_password': newPassword,
+        'new_password_confirmation': newPassword,
+      });
+      if (response.statusCode == 200) {
+        // Successful password change usually logs out or requires re-login
+        _isLoading = false;
+        notifyListeners();
+        return true;
+      }
+    } catch (e) {
+      // Error handling
+    }
+    _isLoading = false;
+    notifyListeners();
+    return false;
+  }
 }
