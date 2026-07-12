@@ -10,6 +10,7 @@ import 'providers/staff_provider.dart';
 import 'providers/notification_provider.dart';
 
 import 'screens/login_screen.dart';
+import 'screens/biometric_lock_screen.dart';
 import 'screens/admin_dashboard_screen.dart';
 import 'screens/student_dashboard_screen.dart';
 import 'screens/staff_dashboard_screen.dart';
@@ -61,10 +62,15 @@ class SchoolErpApp extends StatelessWidget {
       initialLocation: '/login',
       redirect: (context, state) {
         final loggedIn = authProvider.isAuthenticated;
-        final isLoggingIn = state.uri.toString() == '/login';
+        final unlocked = authProvider.isUnlocked;
+        final path = state.uri.toString();
+        final isLoggingIn = path == '/login';
+        final isLocked = path == '/biometric-lock';
 
-        if (!loggedIn && !isLoggingIn) return '/login';
-        if (loggedIn && isLoggingIn) {
+        if (!loggedIn) return isLoggingIn ? null : '/login';
+        if (!unlocked) return isLocked ? null : '/biometric-lock';
+
+        if (isLoggingIn || isLocked) {
           final user = authProvider.user;
           if (user != null) {
             final role = user['role'] ?? user['user_type'] ?? '';
@@ -79,7 +85,8 @@ class SchoolErpApp extends StatelessWidget {
       },
       routes: [
         GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-        
+        GoRoute(path: '/biometric-lock', builder: (context, state) => const BiometricLockScreen()),
+
         // Dashboards
         GoRoute(path: '/admin-dashboard', builder: (context, state) => AdminDashboardScreen()),
         GoRoute(path: '/student-dashboard', builder: (context, state) => const StudentDashboardScreen()),

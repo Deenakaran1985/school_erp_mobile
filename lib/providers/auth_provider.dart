@@ -1,30 +1,64 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/api_service.dart';
+import '../services/biometric_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final ApiService _apiService;
+  final BiometricService _biometricService = BiometricService();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
-  
+
   bool _isAuthenticated = false;
   bool _isLoading = false;
+  bool _biometricEnabled = false;
+  bool _isUnlocked = true;
   Map<String, dynamic>? _user;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
+  bool get biometricEnabled => _biometricEnabled;
+  bool get isUnlocked => _isUnlocked;
   Map<String, dynamic>? get user => _user;
 
   AuthProvider(this._apiService) {
     _checkAuth();
   }
 
+  Future<bool> isBiometricAvailable() => _biometricService.isAvailable();
+
   Future<void> _checkAuth() async {
     final token = await _storage.read(key: 'auth_token');
+    final bioFlag = await _storage.read(key: 'biometric_enabled');
+    _biometricEnabled = bioFlag == 'true';
+
     if (token != null) {
       _isAuthenticated = true;
+      _isUnlocked = !_biometricEnabled;
       notifyListeners();
       await fetchUser();
     }
+  }
+
+  Future<bool> unlockWithBiometric() async {
+    final ok = await _biometricService.authenticate();
+    if (ok) {
+      _isUnlocked = true;
+      notifyListeners();
+    }
+    return ok;
+  }
+
+  Future<bool> setBiometricEnabled(bool enabled) async {
+    if (enabled) {
+      final available = await _biometricService.isAvailable();
+      if (!available) return false;
+      final ok = await _biometricService.authenticate();
+      if (!ok) return false;
+    }
+    _biometricEnabled = enabled;
+    await _storage.write(key: 'biometric_enabled', value: enabled.toString());
+    notifyListeners();
+    return true;
   }
 
   Future<bool> login(String email, String password) async {
@@ -41,6 +75,7 @@ class AuthProvider with ChangeNotifier {
         final token = response.data['token'];
         await _storage.write(key: 'auth_token', value: token);
         _isAuthenticated = true;
+        _isUnlocked = true;
         _user = response.data['user'];
         _user!['role'] = response.data['role'];
         _isLoading = false;
@@ -76,6 +111,7 @@ class AuthProvider with ChangeNotifier {
     }
     await _storage.delete(key: 'auth_token');
     _isAuthenticated = false;
+    _isUnlocked = true;
     _user = null;
     notifyListeners();
   }
