@@ -72,14 +72,12 @@ class SchoolErpApp extends StatelessWidget {
 
         if (isLoggingIn || isLocked) {
           final user = authProvider.user;
-          if (user != null) {
-            final role = user['role'] ?? user['user_type'] ?? '';
-            if (role == 'parent') return '/parent-dashboard';
-            if (role == 'student') return '/student-dashboard';
-            if (role == 'teacher' || role == 'staff') return '/staff-dashboard';
-            return '/admin-dashboard';
-          }
-          return '/admin-dashboard'; // fallback
+          if (user == null) return null; // still resolving; don't guess a role yet
+          final role = user['role'] ?? user['user_type'] ?? '';
+          if (role == 'parent') return '/parent-dashboard';
+          if (role == 'student') return '/student-dashboard';
+          if (role == 'teacher' || role == 'staff') return '/staff-dashboard';
+          return '/admin-dashboard';
         }
         return null;
       },
