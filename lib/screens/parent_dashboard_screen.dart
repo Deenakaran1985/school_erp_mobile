@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
 import '../providers/student_provider.dart';
 
 class ParentDashboardScreen extends StatefulWidget {
@@ -30,6 +31,10 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
           IconButton(
             icon: Icon(Icons.person),
             onPressed: () => context.push('/profile'),
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () => context.read<AuthProvider>().logout(),
           ),
         ],
       ),
@@ -113,13 +118,17 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
             _buildAttendanceCard(provider.attendanceSummary),
             
             SizedBox(height: 16),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
+            GridView.count(
+              crossAxisCount: 3,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.0,
               children: [
-                _buildActionCard(context, 'Exams', Icons.assignment, '/student_exams'),
-                _buildActionCard(context, 'Results', Icons.grade, '/student_results'),
-                _buildActionCard(context, 'Fees', Icons.payment, '/student_fees'),
+                _buildActionCard(context, 'Exams', Icons.assignment, Colors.blue, '/student_exams'),
+                _buildActionCard(context, 'Results', Icons.grade, Colors.purple, '/student_results'),
+                _buildActionCard(context, 'Fees', Icons.payment, Colors.green, '/student_fees'),
               ],
             ),
             
@@ -165,20 +174,24 @@ class _ParentDashboardScreenState extends State<ParentDashboardScreen> {
     );
   }
 
-  Widget _buildActionCard(BuildContext context, String title, IconData icon, String route) {
+  Widget _buildActionCard(BuildContext context, String title, IconData icon, MaterialColor color, String route) {
     return InkWell(
       onTap: () => context.push(route),
-      child: Card(
-        child: Container(
-          width: 100,
-          padding: EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Icon(icon, size: 32, color: Colors.blue),
-              SizedBox(height: 8),
-              Text(title, textAlign: TextAlign.center),
-            ],
-          ),
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.shade100, width: 2),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 28, color: color.shade500),
+            const SizedBox(height: 8),
+            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+          ],
         ),
       ),
     );
