@@ -114,6 +114,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
     if (role == 'super_admin' || role == 'accountant' || role == 'correspondent') {
       actions.add(_buildActionCard(context, 'Fee Summary', Icons.monetization_on, Colors.green, '/admin_fee_summary'));
+      actions.add(_buildActionCard(context, 'Fee Balance', Icons.timer_outlined, Colors.red, '/admin_fee_balance'));
       actions.add(_buildActionCard(context, 'Payroll', Icons.account_balance_wallet, Colors.purple, '/admin_payroll_summary'));
       actions.add(_buildActionCard(context, 'Expenses', Icons.receipt, Colors.orange, '/admin_expenses'));
     }

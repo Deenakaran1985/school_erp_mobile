@@ -33,6 +33,8 @@ import 'screens/admin_payroll_summary_screen.dart';
 import 'screens/admin_staff_list_screen.dart';
 import 'screens/admin_expenses_screen.dart';
 import 'screens/admin_send_notification_screen.dart';
+import 'screens/admin_fee_balance_screen.dart';
+import 'screens/admin_discount_letters_screen.dart';
 
 void main() {
   final apiService = ApiService();
@@ -113,6 +115,17 @@ class SchoolErpApp extends StatelessWidget {
         GoRoute(path: '/admin_staff_list', builder: (context, state) => AdminStaffListScreen()),
         GoRoute(path: '/admin_expenses', builder: (context, state) => AdminExpensesScreen()),
         GoRoute(path: '/admin_send_notification', builder: (context, state) => AdminSendNotificationScreen()),
+        GoRoute(path: '/admin_fee_balance', builder: (context, state) => AdminFeeBalanceScreen()),
+        GoRoute(
+          path: '/admin_discount_letters',
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return AdminDiscountLettersScreen(
+              studentId: extra['student_id'] as int,
+              studentName: extra['student_name'] as String? ?? 'Student',
+            );
+          },
+        ),
       ],
     );
 

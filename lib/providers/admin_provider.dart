@@ -10,6 +10,8 @@ class AdminProvider with ChangeNotifier {
   Map<String, dynamic>? _payrollSummary;
   List<dynamic> _staffList = [];
   List<dynamic> _expenses = [];
+  List<dynamic> _feeBalanceReport = [];
+  List<dynamic> _discountLetters = [];
   String? _error;
 
   bool get isLoading => _isLoading;
@@ -18,6 +20,8 @@ class AdminProvider with ChangeNotifier {
   Map<String, dynamic>? get payrollSummary => _payrollSummary;
   List<dynamic> get staffList => _staffList;
   List<dynamic> get expenses => _expenses;
+  List<dynamic> get feeBalanceReport => _feeBalanceReport;
+  List<dynamic> get discountLetters => _discountLetters;
   String? get error => _error;
 
   AdminProvider(this._apiService);
@@ -102,6 +106,63 @@ class AdminProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return response.statusCode == 200;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<void> fetchFeeBalanceReport({String? search, int? classId}) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+    try {
+      final response = await _apiService.get('/correspondent/fee-balance-report', queryParameters: {
+        if (search != null && search.isNotEmpty) 'search': search,
+        if (classId != null) 'class_id': classId,
+      });
+      if (response.statusCode == 200) _feeBalanceReport = response.data['data'] ?? [];
+    } catch (e) {
+      _error = e.toString();
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<bool> notifyParentOfBalance(int studentId) async {
+    try {
+      final response = await _apiService.post('/correspondent/fee-balance-report/$studentId/notify');
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  Future<void> fetchDiscountLetters({int? studentId}) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await _apiService.get('/correspondent/discount-letters', queryParameters: {
+        if (studentId != null) 'student_id': studentId,
+      });
+      if (response.statusCode == 200) _discountLetters = response.data['data'] ?? [];
+    } catch (e) {
+      _error = e.toString();
+    }
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<bool> addDiscountLetter(Map<String, dynamic> payload) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final response = await _apiService.post('/correspondent/discount-letters', data: payload);
+      _isLoading = false;
+      notifyListeners();
+      return response.statusCode == 201;
     } catch (e) {
       _error = e.toString();
       _isLoading = false;
