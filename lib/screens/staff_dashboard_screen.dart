@@ -25,7 +25,8 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
     final staffProvider = context.watch<StaffProvider>();
     final profile = staffProvider.profile;
     final classes = staffProvider.myClasses;
-    
+    final isCounsellor = context.watch<AuthProvider>().user?['is_counsellor'] == true;
+
     final name = profile?['name'] ?? 'Staff Member';
     final designation = profile?['designation'] ?? 'Teacher';
 
@@ -100,6 +101,8 @@ class _StaffDashboardScreenState extends State<StaffDashboardScreen> {
                             _buildCard('Add Homework', Icons.add_task, Colors.indigo, () => context.push('/create_homework')),
                             _buildCard('View Students', Icons.groups, Colors.blue, () => context.push('/staff_students')),
                             _buildCard('My Payslips', Icons.receipt, Colors.purple, () => context.push('/staff_payslips')),
+                            if (isCounsellor)
+                              _buildCard('My Leads', Icons.campaign_outlined, Colors.pink, () => context.push('/my_leads')),
                           ],
                         ),
 

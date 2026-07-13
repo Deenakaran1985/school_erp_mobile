@@ -8,6 +8,7 @@ import 'providers/admin_provider.dart';
 import 'providers/student_provider.dart';
 import 'providers/staff_provider.dart';
 import 'providers/notification_provider.dart';
+import 'providers/crm_provider.dart';
 
 import 'screens/login_screen.dart';
 import 'screens/biometric_lock_screen.dart';
@@ -35,6 +36,8 @@ import 'screens/admin_expenses_screen.dart';
 import 'screens/admin_send_notification_screen.dart';
 import 'screens/admin_fee_balance_screen.dart';
 import 'screens/admin_discount_letters_screen.dart';
+import 'screens/my_leads_screen.dart';
+import 'screens/lead_detail_screen.dart';
 
 void main() {
   final apiService = ApiService();
@@ -46,6 +49,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => StudentProvider(apiService)),
         ChangeNotifierProvider(create: (_) => StaffProvider(apiService)),
         ChangeNotifierProvider(create: (_) => NotificationProvider(apiService)),
+        ChangeNotifierProvider(create: (_) => CrmProvider(apiService)),
       ],
       child: const SchoolErpApp(),
     ),
@@ -108,7 +112,14 @@ class SchoolErpApp extends StatelessWidget {
         GoRoute(path: '/staff_students', builder: (context, state) => StaffStudentsScreen()),
         GoRoute(path: '/mark_attendance', builder: (context, state) => MarkAttendanceScreen()),
         GoRoute(path: '/create_homework', builder: (context, state) => CreateHomeworkScreen()),
-        
+
+        // CRM (Counsellors)
+        GoRoute(path: '/my_leads', builder: (context, state) => const MyLeadsScreen()),
+        GoRoute(
+          path: '/lead_detail/:leadId',
+          builder: (context, state) => LeadDetailScreen(leadId: int.parse(state.pathParameters['leadId']!)),
+        ),
+
         // Admin
         GoRoute(path: '/admin_fee_summary', builder: (context, state) => AdminFeeSummaryScreen()),
         GoRoute(path: '/admin_payroll_summary', builder: (context, state) => AdminPayrollSummaryScreen()),
