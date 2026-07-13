@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../services/api_service.dart';
@@ -13,12 +14,14 @@ class AuthProvider with ChangeNotifier {
   bool _biometricEnabled = false;
   bool _isUnlocked = true;
   Map<String, dynamic>? _user;
+  String? _lastError;
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isLoading => _isLoading;
   bool get biometricEnabled => _biometricEnabled;
   bool get isUnlocked => _isUnlocked;
   Map<String, dynamic>? get user => _user;
+  String? get lastError => _lastError;
 
   AuthProvider(this._apiService) {
     _checkAuth();
@@ -63,6 +66,7 @@ class AuthProvider with ChangeNotifier {
 
   Future<bool> login(String email, String password) async {
     _isLoading = true;
+    _lastError = null;
     notifyListeners();
 
     try {
@@ -82,8 +86,15 @@ class AuthProvider with ChangeNotifier {
         notifyListeners();
         return true;
       }
+      _lastError = 'Unexpected response (status ${response.statusCode}).';
+    } on DioException catch (e) {
+      final serverMessage = e.response?.data is Map ? e.response?.data['message'] : null;
+      _lastError = serverMessage ??
+          (e.response != null
+              ? 'Server error (${e.response?.statusCode}).'
+              : 'Network error: ${e.message}');
     } catch (e) {
-      // Handle login error
+      _lastError = 'Unexpected error: $e';
     }
 
     _isLoading = false;

@@ -82,8 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                   _passwordController.text,
                                 );
                             if (!success && mounted) {
+                              final error = context.read<AuthProvider>().lastError;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Login failed. Check credentials.')),
+                                SnackBar(content: Text(error ?? 'Login failed. Check credentials.')),
                               );
                             }
                           }
