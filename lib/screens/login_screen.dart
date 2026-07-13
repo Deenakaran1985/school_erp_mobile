@@ -50,13 +50,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(
-                    labelText: 'Email Address',
-                    prefixIcon: const Icon(Icons.email_outlined),
+                    labelText: 'Phone / Employee ID / Admission No',
+                    prefixIcon: const Icon(Icons.person_outline),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                     filled: true,
                     fillColor: Colors.white,
                   ),
-                  validator: (v) => v!.isEmpty ? 'Please enter email' : null,
+                  validator: (v) => v!.isEmpty ? 'Please enter your login ID' : null,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
